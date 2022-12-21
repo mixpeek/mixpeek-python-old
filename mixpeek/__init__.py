@@ -64,10 +64,11 @@ class Mixpeek:
         """
         url = f'{self.base_url}/search'
         # add url params
-        params = dict()
-        params["q"] = query
+        url_params = urlencode(params)
+        # build full url
+        full_url = "{}?q={}&{}".format(url, query, url_params)
         # send request
         response = requests.request(
-            "GET", url, params=params, headers=self.header)
+            "GET", full_url, params=params, headers=self.header)
 
         return response.json()

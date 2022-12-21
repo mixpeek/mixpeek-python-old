@@ -3,101 +3,102 @@
 Mixpeek let's you run full-text-search on your files
 
 **Stuff you might be looking for**:
- - [Installing Mixpeek](https://github.com/mixpeek/mixpeek-python#installation)
- - [Integrations](https://github.com/mixpeek/mixpeek-python#integrations)
- - [Bugs & Questions](https://github.com/mixpeek/mixpeek-python#bugs-&-questions)
 
+- [Installing Mixpeek](https://github.com/mixpeek/mixpeek-python#installation)
+- [S3 Support](https://github.com/mixpeek/mixpeek-python#s3-support)
+- [Bugs & Questions](https://github.com/mixpeek/mixpeek-python#bugs-&-questions)
 
 ## Quickstart
 
-Upload any image filetype for text extraction
+Upload any filetype from the supported filetype [list here](https://mixpeek.com/learn)
 
 ```python
 from mixpeek import Mixpeek
 
-mix = Mixpeek(
-    api_key="my-api-key"
-)
+mix = Mixpeek(api_key="API_KEY")
 
-mix.upload(file_name="website_screenshot.png", file_path="desktop/username/tmp/website_screenshot.png")
+# index one local pdf document without any extra metadata
+mix.index("/user/desktop/file.pdf")
+
+# with extra metadata
+mix.index("/user/desktop/file.pdf", user_id="123", tags="document, legal", static_file_url="cdn.host.com/file.pdf")
 ```
 
 ...or any audio filetype
 
 ```python
-mix.upload(file_name="never_gonna_give_you_up.mp3", file_path="desktop/username/tmp/never_gonna_give_you_up.mp3")
+mix.index("/user/desktop/never_gonna_give_you_up.mp3")
 ```
 
-... or a pdf, or doc, or [anything else tika supports](https://tika.apache.org/0.9/formats.html)
+... or an image, video, document or [anything else mixpeek supports](https://mixpeek.com/learn)
 
 ```python
-pdf_version = mix.upload(file_name="some_document.pdf", file_path="desktop/username/tmp/some_document.pdf")
-doc_version = mix.upload(file_name="some_document.doc", file_path="desktop/username/tmp/some_document.doc")
-html_version = mix.upload(file_name="some_document.html", file_path="desktop/username/tmp/some_document.html")
+video = mix.index("/user/desktop/video.avi")
+image = mix.index("/user/desktop/image.png")
+markdown = mix.index("/user/desktop/markdown.md")
 ```
 
-The API will return some information including the extracted text:
+The API will return the `file_id`, be sure to store this:
 
 ```python
+# response
 {
-    "code": 200,
-    "endpoint": "/upload",
-    "ok": True,
-    "response": {
-        "_id": "615e71fd47d7df57aeb93c27",
-        "api_key": "your_api_key",
-        "corpus": "Never gonna give you up. Never gonna let you down. Never gonna run around and desert you.",
-        "metadata": {
-            "date_inserted": "2021-10-07 04:05:17.942499",
-            "filename": "never_gonna_give_you_up.mp3"
-            "file_url": "desktop/username/tmp/never_gonna_give_you_up.mp3"
-        }
-    },
-    "timestamp": 1633579517.955764
+    "file_id": "63a32cca0de5e4ce354a4b1c"
 }
 ```
 
-Search for file contents:
+Now you can search across all your files:
 
 ```python
-query = mix.search(query="let you down")
+mix.search(query="let you down")
 
-print(query)
-
+# response
 [
     {
-        "_id": "615e71fd47d7df57aeb93c27",
-        "api_key": "REDACTED",
-        "highlights": [
-            {
-                "score": 0.8759502172470093,
-                "texts": [
-                    {
-                        "type": "text",
-                        "value": "Never gonna give you up. Never gonna "
-                    },
-                    {
-                        "type": "hit",
-                        "value": "let you down"
-                    },
-                    {
-                        "type": "text",
-                        "value": ". Never gonna run around and desert you."
-                    }
-                ]
-            }
-        ],
-        "metadata": {
-            "date_inserted": "2021-10-07 04:05:17.942499",
-            "filename": "never_gonna_give_you_up.mp3"
-            "file_url": "desktop/username/tmp/never_gonna_give_you_up.mp3"            
-        },
-        "score": 0.13313256204128265
+        "file_id": "6377c98b3c4f239f17663d79",
+        "filename": "prescription.pdf",
+        "importance": "100%",
+        "static_file_url": "s3://audio.mp3"
     }
 ]
 
 ```
 
+And you can include other parameters in your search query:
+
+```python
+mix.search("readme", user_id="john_smith_123", context="true", tags="legal, document")
+
+# response
+[
+    {
+        "file_id": "63a32cd70de5e4ce354a4b1f",
+        "filename": "system-design-primer.md",
+        "static_file_url": "s3://audio.mp3",
+        "user_id": "john_smith_123",
+        "tags":["legal", "document"],
+        "highlights": [
+            {
+                "texts": [
+                    {
+                        "type": "text",
+                        "value": "- What is the expected "
+                    },
+                    {
+                        "type": "hit",
+                        "value": "read"
+                    },
+                    {
+                        "type": "text",
+                        "value": " to write ratio?\n\n"
+                    }
+                ]
+            }
+        ],
+        "importance": "100%"
+    }
+]
+```
 
 ## Installation
 
@@ -107,29 +108,36 @@ Installing mixpeek is easy
 pip install git+https://github.com/mixpeek/mixpeek-python.git@master
 ```
 
+## S3 Support
 
-## Integrations
+Be sure you create an AWS access key/secret key combo with S3 bucket read permissions using [this guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
 
-
-S3
+Files are never stored on our servers, review our [security principles](https://mixpeek.com/security).
 
 ```python
-from mixpeek import S3
-from config import mixpeek_api_key, aws
+from mixpeek import Mixpeek
 
-s3 = S3(
-    aws_access_key_id=aws['aws_access_key_id'],
-    aws_secret_access_key=aws['aws_secret_access_key'],
-    region_name='us-east-2',
-    mixpeek_api_key=mixpeek_api_key
+mix = Mixpeek(
+    api_key="mixpeek_api_key",
+    access_key="aws_access_key",
+    secret_key="aws_secret_key",
+    region="region"
 )
-# upload all files in a bucket
-s3.upload_all(bucket_name="demo-bucket")
 
-# upload one single file in a bucket
-s3.upload_one(s3_file_name="never_gonna_give_you_up.mp3", bucket_name="demo-bucket")
+mix.index_bucket("mixpeek-public-demo")
+
+# response (list of File_ids)
+
+{
+    "file_ids": [
+        "63a33611660c021b50271666",
+        "63a33611660c021b50271667",
+        "63a33611660c021b50271668",
+        "63a33613660c021b50271669"
+    ]
+}
+
 ```
-
 
 ## Bugs & Questions
 
@@ -138,7 +146,6 @@ and ask any technical questions on
 [Stack Overflow using the mixpeek tag](http://stackoverflow.com/questions/ask?tags=mixpeek).
 We keep an eye on both.
 
-
 ## 🚀 Features
 
 - Supports for `Python 3.8` and higher.
@@ -146,11 +153,9 @@ We keep an eye on both.
 - AWS S3 Integration
 - Fuzzy text matching
 
-
 ## Articles:
 
-- [Add search to your S3 bucket’s non-text files](https://medium.com/@mixpeek/add-search-to-your-s3-buckets-non-text-files-9a676452b4fd)
-
+[Learning Center](https://mixpeek.com/learn)
 
 ## License ([MIT License](http://opensource.org/licenses/mit-license.php))
 
