@@ -141,6 +141,8 @@ mix.index_bucket("mixpeek-public-demo")
 
 ## Bugs & Questions
 
+If this was helpful, please upvote [this StackOverflow comment](https://stackoverflow.com/a/69475102/5956579)
+
 You can file bugs in our [github issues tracker](https://github.com/mixpeek/mixpeek-python/issues),
 and ask any technical questions on
 [Stack Overflow using the mixpeek tag](http://stackoverflow.com/questions/ask?tags=mixpeek).
