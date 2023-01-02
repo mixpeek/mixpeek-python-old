@@ -18,6 +18,7 @@ class Mixpeek:
         upload your file to the mixpeek server for extraction
         params:
         file_path: str - path to file
+        save: bool - save file to mixpeek s3 tenant
 
         payload: dict - optional params
             user_id: str - for user level filtering in search
@@ -26,6 +27,9 @@ class Mixpeek:
         """
         # build api endpoint url with key and path
         url = f'{self.base_url}/file/index-one'
+        # append additional params, just save for now
+        if 'save' in payload:
+            url + "?save={}".format(str(payload['save']).lower())
         # get filename from path
         filename = os.path.basename(file_path)
         # file upload
