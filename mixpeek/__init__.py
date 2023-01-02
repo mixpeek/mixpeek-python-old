@@ -24,6 +24,7 @@ class Mixpeek:
             user_id: str - for user level filtering in search
             tags: str - tags associated with file
             static_file_url: str - reference for file
+            description: str - description of file
         """
         # build api endpoint url with key and path
         url = f'{self.base_url}/file/index-one'
