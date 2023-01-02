@@ -21,7 +21,14 @@ mix = Mixpeek(api_key="API_KEY")
 mix.index("/user/desktop/file.pdf")
 
 # with extra metadata
-mix.index("/user/desktop/file.pdf", user_id="123", tags="document, legal", static_file_url="cdn.host.com/file.pdf")
+mix.index(
+    "/user/desktop/file.pdf",
+    user_id="123",
+    tags="document, legal",
+    static_file_url="cdn.host.com/file.pdf",
+    save=True,
+    description="this is a cat"
+)
 ```
 
 ...or any audio filetype
@@ -67,7 +74,12 @@ mix.search(query="let you down")
 And you can include other parameters in your search query:
 
 ```python
-mix.search("readme", user_id="john_smith_123", context="true", tags="legal, document")
+mix.search(
+    "readme",
+    user_id="john_smith_123",
+    context="true",
+    tags="legal, document"
+)
 
 # response
 [
