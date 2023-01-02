@@ -4,6 +4,7 @@ Mixpeek let's you run full-text-search on your files
 
 **Stuff you might be looking for**:
 
+- [API Documentation](https://docs.mixpeek.com)
 - [Installing Mixpeek](https://github.com/mixpeek/mixpeek-python#installation)
 - [S3 Support](https://github.com/mixpeek/mixpeek-python#s3-support)
 - [Bugs & Questions](https://github.com/mixpeek/mixpeek-python#bugs-&-questions)
