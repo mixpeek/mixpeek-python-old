@@ -6,7 +6,7 @@ import json
 
 class Mixpeek:
     def __init__(self, api_key, access_key=None, secret_key=None, region=None):
-        self.base_url = "http://localhost:5008/v1"
+        self.base_url = "https://api.mixpeek.com/v1"
         self.header = {"Authorization": api_key}
         # optional params if user is using AWS S3
         self.access_key = access_key
