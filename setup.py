@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="mixpeek",
-    version="0.2",
+    version="0.3",
     license="MIT",
     author="Ethan Steininger",
     author_email="info@mixpeek.com",

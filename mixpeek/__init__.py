@@ -5,7 +5,7 @@ import json
 
 class Mixpeek:
     def __init__(self, api_key):
-        self.base_url = "http://localhost:8000"
+        self.base_url = "https://api.mixpeek.com"
         self.headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
