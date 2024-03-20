@@ -9,11 +9,12 @@ readme = "README.md"
 python = "^3.11"
 pydantic = "^2.6.4"
 requests = "^2.31.0"
+
+[tool.poetry.dev-dependencies]
 setuptools = "^69.2.0"
 wheel = "^0.43.0"
 twine = "^5.0.0"
 
-
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
