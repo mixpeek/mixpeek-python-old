@@ -3,10 +3,9 @@ name: Publish Python 🐍 package to PyPI
 on:
   push:
     branches:
-      - main  # Or your default branch
+      - master
     tags:
-      - 'v*'  # This assumes your tag names follow semantic versioning
-
+      - 'v*'
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
@@ -26,4 +25,3 @@ jobs:
         
       - name: Build and publish
         run: poetry publish --build
-
