@@ -1,45 +1,29 @@
-name: Publish Python Package
+name: Publish Python 🐍 package to PyPI
 
 on:
   push:
     branches:
       - main  # Or your default branch
+    tags:
+      - 'v*'  # This assumes your tag names follow semantic versioning
 
 jobs:
-  publish:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'  # Set this to your Python version
+      - uses: actions/checkout@v2
+      
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+          
+      - name: Install poetry
+        run: pip install poetry
+        
+      - name: Configure poetry
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+        
+      - name: Build and publish
+        run: poetry publish --build
 
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-
-    - name: Configure Poetry
-      run: |
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-    - name: Install Dependencies
-      run: poetry install
-
-    - name: Increment Version
-      run: poetry version patch
-
-    - name: Build Package
-      run: poetry build
-
-
-    - name: Build Package
-      run: |
-        python setup.py sdist bdist_wheel
-
-    # Uncomment the following steps to publish your package to PyPI
-    - name: Publish to PyPI
-     uses: pypa/gh-action-pypi-publish@master
-     with:
-       user: __token__
-       password: ${{ secrets.PYPI_API_TOKEN }}
