@@ -10,14 +10,27 @@ class Mixpeek:
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
+
         self.generate = self.Generate(self)
         self.parse = self.Parse(self)
+        self.embed = self.Embed(self)
 
     def _send_post(self, url, payload):
         return requests.post(url, headers=self.headers, data=json.dumps(payload)).json()
 
-    def _send_get(self, url):
-        return requests.get(url, headers=self.headers).json()
+    def _send_get(self, url, payload=None):
+        return requests.get(url, headers=self.headers, data=json.dumps(payload)).json()
+
+    class Embed:
+        def __init__(self, mixpeek):
+            self.mixpeek = mixpeek
+            self.embed_url = f"{self.mixpeek.base_url}/embed"
+
+        def text(self, text, additional_data=None):
+            payload = {"input": text}
+            if additional_data is not None:
+                payload.update(additional_data)
+            return self.mixpeek._send_get(self.embed_url, payload)
 
     class Generate:
         def __init__(self, mixpeek):
