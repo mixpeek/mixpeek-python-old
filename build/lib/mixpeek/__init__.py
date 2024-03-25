@@ -30,7 +30,11 @@ class Mixpeek:
             payload = {"input": text}
             if additional_data is not None:
                 payload.update(additional_data)
-            return self.mixpeek._send_get(self.embed_url, payload)
+            response = self.mixpeek._send_get(self.embed_url, payload)
+            if response.get("success"):
+                return response["response"]["embedding"]
+            else:
+                return None
 
     class Generate:
         def __init__(self, mixpeek):
